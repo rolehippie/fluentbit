@@ -1,0 +1,197 @@
+# Standards: 0.1
+---
+- name: Download repo key
+  apt_key:
+    url: https://packages.fluentbit.io/fluentbit.key
+    id: F209D8762A60CD49E680633B4FF8368B6EA0722A
+    state: present
+  tags:
+    - fluentbit
+
+- name: Add apt repository
+  apt_repository:
+    repo: "deb https://packages.fluentbit.io/{{ fluentbit_repo_distribution }}/{{ fluentbit_repo_release }} {{ fluentbit_repo_release }} main"
+    filename: fluentbit
+    update_cache: True
+    state: present
+  tags:
+    - fluentbit
+
+- name: Install required packages
+  loop:
+    - td-agent-bit
+  package:
+    name: "{{ item }}"
+    state: present
+  tags:
+    - fluentbit
+
+- name: Create required directories
+  loop:
+    - /var/lib/td-agent-bit
+    - /etc/td-agent-bit/config.d
+    - /etc/td-agent-bit/input.d
+    - /etc/td-agent-bit/filter.d
+    - /etc/td-agent-bit/output.d
+  file:
+    path: "{{ item }}"
+    state: directory
+  tags:
+    - fluentbit
+
+- name: Drop plugins config
+  notify:
+    - Restart fluentbit
+  file:
+    path: /etc/td-agent-bit/plugins.conf
+    state: absent
+  tags:
+    - fluentbit
+
+- name: Write service config
+  notify:
+    - Restart fluentbit
+  template:
+    src: config.j2
+    dest: /etc/td-agent-bit/td-agent-bit.conf
+  tags:
+    - fluentbit
+
+- name: Write parsers config
+  notify:
+    - Restart fluentbit
+  template:
+    src: parsers.j2
+    dest: /etc/td-agent-bit/parsers.conf
+  tags:
+    - fluentbit
+
+- name: Write dummy configs
+  notify:
+    - Restart fluentbit
+  loop:
+    - config
+    - input
+    - filter
+    - output
+  copy:
+    content: "# just created to keep imports working"
+    dest: "/etc/td-agent-bit/{{ item }}.d/_dummy.conf"
+  tags:
+    - fluentbit
+
+- name: Write combined configs
+  notify:
+    - Restart fluentbit
+  loop: "{{ fluentbit_default_configs + fluentbit_group_configs + fluentbit_host_configs + fluentbit_extra_configs }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: item.state | default('present') == 'present'
+  copy:
+    content: "{{ item.content }}"
+    dest: /etc/td-agent-bit/config.d/{{ item.name }}.conf
+  tags:
+    - fluentbit
+
+- name: Remove combined configs
+  notify:
+    - Restart fluentbit
+  loop: "{{ fluentbit_default_configs + fluentbit_group_configs + fluentbit_host_configs + fluentbit_extra_configs }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: item.state | default('present') == 'absent'
+  file:
+    path: /etc/td-agent-bit/config.d/{{ item.name }}.conf
+    state: absent
+  tags:
+    - fluentbit
+
+- name: Write input configs
+  notify:
+    - Restart fluentbit
+  loop: "{{ fluentbit_default_inputs + fluentbit_group_inputs + fluentbit_host_inputs + fluentbit_extra_inputs }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: item.state | default('present') == 'present'
+  template:
+    src: input.j2
+    dest: /etc/td-agent-bit/input.d/{{ item.name }}.conf
+  tags:
+    - fluentbit
+
+- name: Remove input configs
+  notify:
+    - Restart fluentbit
+  loop: "{{ fluentbit_default_inputs + fluentbit_group_inputs + fluentbit_host_inputs + fluentbit_extra_inputs }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: item.state | default('present') == 'absent'
+  file:
+    path: /etc/td-agent-bit/input.d/{{ item.name }}.conf
+    state: absent
+  tags:
+    - fluentbit
+
+- name: Write filter configs
+  notify:
+    - Restart fluentbit
+  loop: "{{ fluentbit_default_filters + fluentbit_group_filters + fluentbit_host_filters + fluentbit_extra_filters }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: item.state | default('present') == 'present'
+  template:
+    src: filter.j2
+    dest: /etc/td-agent-bit/filter.d/{{ item.name }}.conf
+  tags:
+    - fluentbit
+
+- name: Remove filter configs
+  notify:
+    - Restart fluentbit
+  loop: "{{ fluentbit_default_filters + fluentbit_group_filters + fluentbit_host_filters + fluentbit_extra_filters }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: item.state | default('present') == 'absent'
+  file:
+    path: /etc/td-agent-bit/filter.d/{{ item.name }}.conf
+    state: absent
+  tags:
+    - fluentbit
+
+- name: Write output configs
+  notify:
+    - Restart fluentbit
+  loop: "{{ fluentbit_default_outputs + fluentbit_group_outputs + fluentbit_host_outputs + fluentbit_extra_outputs }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: item.state | default('present') == 'present'
+  template:
+    src: output.j2
+    dest: /etc/td-agent-bit/output.d/{{ item.name }}.conf
+  tags:
+    - fluentbit
+
+- name: Remove output configs
+  notify:
+    - Restart fluentbit
+  loop: "{{ fluentbit_default_outputs + fluentbit_group_outputs + fluentbit_host_outputs + fluentbit_extra_outputs }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: item.state | default('present') == 'absent'
+  file:
+    path: /etc/td-agent-bit/output.d/{{ item.name }}.conf
+    state: absent
+  tags:
+    - fluentbit
+
+- name: Start fluentbit service
+  systemd:
+    name: td-agent-bit
+    state: started
+    daemon_reload: yes
+    masked: no
+    enabled: yes
+  tags:
+    - fluentbit
+
+...

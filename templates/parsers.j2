@@ -1,0 +1,20 @@
+{% for item in fluentbit_default_parsers + fluentbit_group_parsers + fluentbit_host_parsers + fluentbit_extra_parsers %}
+{% if not loop.first %}
+
+{% endif %}
+[PARSER]
+    Name {{ item.name }}
+    Format {{ item.format }}
+{% if item.regex | default(False) %}
+    Regex {{ item.regex | trim }}
+{% endif %}
+{% if item.time_key | default(False) %}
+    Time_Key {{ item.time_key }}
+{% endif %}
+{% if item.time_format | default(False) %}
+    Time_Format {{ item.time_format }}
+{% endif %}
+{% if item.time_keep | default(False) %}
+    Time_Keep {{ item.time_keep }}
+{% endif %}
+{% endfor %}

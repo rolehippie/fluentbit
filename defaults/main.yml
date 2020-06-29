@@ -1,0 +1,225 @@
+# Standards: 0.1
+---
+# @var fluentbit_repo_distribution:description: Enforce another distribution for the repo
+fluentbit_repo_distribution: "{{ ansible_distribution | lower }}"
+
+# @var fluentbit_repo_release:description: Enforce another release for the repo
+fluentbit_repo_release: "{{ ansible_distribution_release }}"
+
+# @var fluentbit_service_coro_stack_size:description: Coroutines stack size in bytes
+fluentbit_service_coro_stack_size: 24576
+
+# @var fluentbit_service_flush:description: Interval of seconds to flush records
+fluentbit_service_flush: 5
+
+# @var fluentbit_service_log_level:description: Set the verbosity level of the service
+fluentbit_service_log_level: info
+
+# @var fluentbit_service_http_server:description: Enable the built-in HTTP server
+fluentbit_service_http_server: False
+
+# @var fluentbit_service_http_listen:description: Listening address for the HTTP server
+fluentbit_service_http_listen: 0.0.0.0
+
+# @var fluentbit_service_http_port:description: Listening port for the HTTP server
+fluentbit_service_http_port: 2020
+
+# @var fluentbit_default_configs:description: List of default configs
+# @var fluentbit_default_configs:example: >
+# fluentbit_default_configs:
+#   - name: example
+#     content: |
+#       [INPUT]
+#           Name cpu
+#           Tag cpu.local
+#           Interval_Sec 1
+
+#       [OUTPUT]
+#           Name stdout
+#           Match *
+#   - name: foo
+#     state: absent
+# @end
+fluentbit_default_configs: []
+
+# @var fluentbit_group_configs:description: List of group configs
+fluentbit_group_configs: []
+
+# @var fluentbit_host_configs:description: List of host configs
+fluentbit_host_configs: []
+
+# @var fluentbit_extra_configs:description: List of extra configs
+fluentbit_extra_configs: []
+
+# @var fluentbit_default_inputs:description: List of default inputs
+# @var fluentbit_default_inputs:example: >
+# fluentbit_default_inputs:
+#   - name: example
+#     content: |
+#       Name cpu
+#       Tag cpu.local
+#       Interval_Sec 1
+#   - name: to-remove
+#     state: absent
+# @end
+fluentbit_default_inputs:
+  # - name: systemd
+  #   content: |
+  #     Name systemd
+  #     Tag systemd.*
+  #     DB /var/lib/td-agent-bit/systemd.db
+  - name: kern
+    content: |
+      Name Tail
+      Path /var/log/kern.log
+      Path_Key file
+      DB /var/lib/td-agent-bit/kern.db
+      Parser syslog
+  - name: auth
+    content: |
+      Name Tail
+      Path /var/log/auth.log
+      Path_Key file
+      DB /var/lib/td-agent-bit/auth.db
+      Parser syslog
+  - name: dpkg
+    content: |
+      Name tail
+      Path /var/log/dpkg.log
+      Path_Key file
+      DB /var/lib/td-agent-bit/dpkg.db
+      Parser dpkg
+
+# @var fluentbit_group_inputs:description: List of group inputs, similar to fluentbit_default_inputs
+fluentbit_group_inputs: []
+
+# @var fluentbit_host_inputs:description: List of host inputs, similar to fluentbit_default_inputs
+fluentbit_host_inputs: []
+
+# @var fluentbit_extra_inputs:description: List of extra inputs, similar to fluentbit_default_inputs
+fluentbit_extra_inputs: []
+
+# @var fluentbit_default_filters:description: List of default filters
+# @var fluentbit_default_filters:example: >
+# fluentbit_default_filters:
+#   - name: parser
+#     content: |
+#       Name parser
+#       Match dummy.*
+#       Key_Name data
+#       Parser dummy_test
+#   - name: to-remove
+#     state: absent
+# @end
+fluentbit_default_filters:
+  - name: host
+    content: |
+      Name modify
+      Match *
+      Add host {{ ansible_fqdn }}
+
+# @var fluentbit_group_filters:description: List of group filters, similar to fluentbit_default_filters
+fluentbit_group_filters: []
+
+# @var fluentbit_host_filters:description: List of host filters, similar to fluentbit_default_filters
+fluentbit_host_filters: []
+
+# @var fluentbit_extra_filters:description: List of extra filters, similar to fluentbit_default_filters
+fluentbit_extra_filters: []
+
+# @var fluentbit_default_outputs:description: List of default outputs
+# @var fluentbit_default_outputs:example: >
+# fluentbit_default_outputs:
+#   - name: stdout
+#     content: |
+#       Name stdout
+#       Match *
+#   - name: to-remove
+#     state: absent
+# @end
+fluentbit_default_outputs:
+  - name: stdout
+    content: |
+      Name stdout
+      Match *
+
+# @var fluentbit_group_outputs:description: List of group outputs, similar to fluentbit_default_configs
+fluentbit_group_outputs: []
+
+# @var fluentbit_host_outputs:description: List of host outputs, similar to fluentbit_default_configs
+fluentbit_host_outputs: []
+
+# @var fluentbit_extra_outputs:description: List of extra outputs, similar to fluentbit_default_configs
+fluentbit_extra_outputs: []
+
+# @var fluentbit_default_parsers:description: List of default parsers
+fluentbit_default_parsers:
+  - name: apache2_access
+    format: regex
+    regex: |
+      ^(?<host>[^ ]*) [^ ]* (?<user>[^ ]*) \[(?<time>[^\]]*)\] "(?<method>\S+)(?: +(?<path>[^ ]*) +\S*)?" (?<code>[^ ]*) (?<size>[^ ]*)(?: "(?<referer>[^\"]*)" "(?<agent>.*)")?$
+    time_key: time
+    time_format: "%d/%b/%Y:%H:%M:%S %z"
+
+  - name: apache2_error
+    format: regex
+    regex: |
+      ^\[[^ ]* (?<time>[^\]]*)\] \[(?<level>[^\]]*)\](?: \[pid (?<pid>[^\]]*)\])?( \[client (?<client>[^\]]*)\])? (?<message>.*)$
+    time_key: time
+    time_format: "%b %d %H:%M:%S.%L %Y"
+
+  - name: json
+    format: json
+    time_key: time
+    time_format: "%d/%b/%Y:%H:%M:%S %z"
+
+  - name: docker
+    format: json
+    time_key: time
+    time_format: "%Y-%m-%dT%H:%M:%S.%L"
+
+  - name: dockerd
+    format: regex
+    regex: |
+      time="(?<time>[^ ]*)" level=(?<level>[^ ]*) msg="(?<msg>[^ ].*)"
+    time_key: time
+    time_format: "%Y-%m-%dT%H:%M:%S.%L"
+
+  - name: syslog
+    format: regex
+    regex: |
+      ^(?<time>[^ ]* {1,2}[^ ]* [^ ]*) (?<ident>[a-zA-Z0-9_\/\.\-]*)(?:\[(?<pid>[0-9]+)\])?(?:[^\:]*\:)? *(?<message>.*)$
+    time_key: time
+    time_format: "%b %d %H:%M:%S"
+
+  - name: mongodb
+    format: regex
+    regex: |
+      ^(?<time>[^ ]*)\s+(?<severity>\w)\s+(?<component>[^ ]+)\s+\[(?<context>[^\]]+)]\s+(?<message>.*?)$
+    time_key: time
+    time_format: "%Y-%m-%dT%H:%M:%S.%L"
+
+  - name: mysql
+    format: regex
+    regex: |
+      ^(?<time>\d{4}-\d{1,2}-\d{1,2}[ ]+\d{1,2}:\d{1,2}:\d{1,2}) (?<thread>[^ ]*) \[(?<level>[^ ]*)\] *(?<message>.*)$
+    time_key: time
+    time_format: "%Y-%m-%dT %H:%M:%S"
+
+  - name: dpkg
+    format: regex
+    regex: |
+      ^(?<time>[^ ]+ [^ ]+) (?<message>.+)$
+    time_key: time
+    time_format: "%Y-%m-%d %H:%M:%S"
+
+# @var fluentbit_default_parsers:description: List of group parsers, similar to fluentbit_default_parsers
+fluentbit_group_parsers: []
+
+# @var fluentbit_default_parsers:description: List of host parsers, similar to fluentbit_default_parsers
+fluentbit_host_parsers: []
+
+# @var fluentbit_default_parsers:description: List of extra parsers, similar to fluentbit_default_parsers
+fluentbit_extra_parsers: []
+
+...
