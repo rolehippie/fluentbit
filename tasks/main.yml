@@ -1,4 +1,4 @@
-# Standards: 0.1
+# Standards: 1.2
 ---
 - name: Download repo key
   apt_key:
