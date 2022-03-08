@@ -1,49 +1,50 @@
 # fluentbit
 
-[![Source Code](https://img.shields.io/badge/github-source%20code-blue?logo=github&logoColor=white)](https://github.com/rolehippie/fluentbit) [![Testing Build](https://github.com/rolehippie/fluentbit/workflows/testing/badge.svg)](https://github.com/rolehippie/fluentbit/actions?query=workflow%3Atesting) [![Readme Build](https://github.com/rolehippie/fluentbit/workflows/readme/badge.svg)](https://github.com/rolehippie/fluentbit/actions?query=workflow%3Areadme) [![Galaxy Build](https://github.com/rolehippie/fluentbit/workflows/galaxy/badge.svg)](https://github.com/rolehippie/fluentbit/actions?query=workflow%3Agalaxy) [![License: Apache-2.0](https://img.shields.io/github/license/rolehippie/fluentbit)](https://github.com/rolehippie/fluentbit/blob/master/LICENSE) 
+[![Source Code](https://img.shields.io/badge/github-source%20code-blue?logo=github&logoColor=white)](https://github.com/rolehippie/fluentbit) [![Testing Build](https://github.com/rolehippie/fluentbit/workflows/testing/badge.svg)](https://github.com/rolehippie/fluentbit/actions?query=workflow%3Atesting) [![Readme Build](https://github.com/rolehippie/fluentbit/workflows/readme/badge.svg)](https://github.com/rolehippie/fluentbit/actions?query=workflow%3Areadme) [![Galaxy Build](https://github.com/rolehippie/fluentbit/workflows/galaxy/badge.svg)](https://github.com/rolehippie/fluentbit/actions?query=workflow%3Agalaxy) [![License: Apache-2.0](https://img.shields.io/github/license/rolehippie/fluentbit)](https://github.com/rolehippie/fluentbit/blob/master/LICENSE)
 
-Ansible role to install and configure fluentbit. 
+Ansible role to install and configure fluentbit.
 
-## Sponsor 
+## Sponsor
 
-[![Proact Deutschland GmbH](https://proact.eu/wp-content/uploads/2020/03/proact-logo.png)](https://proact.eu) 
+[![Proact Deutschland GmbH](https://proact.eu/wp-content/uploads/2020/03/proact-logo.png)](https://proact.eu)
 
 Building and improving this Ansible role have been sponsored by my employer **Proact Deutschland GmbH**.
 
 ## Table of content
 
-* [Default Variables](#default-variables)
-  * [fluentbit_default_configs](#fluentbit_default_configs)
-  * [fluentbit_default_filters](#fluentbit_default_filters)
-  * [fluentbit_default_inputs](#fluentbit_default_inputs)
-  * [fluentbit_default_outputs](#fluentbit_default_outputs)
-  * [fluentbit_default_parsers](#fluentbit_default_parsers)
-  * [fluentbit_extra_configs](#fluentbit_extra_configs)
-  * [fluentbit_extra_filters](#fluentbit_extra_filters)
-  * [fluentbit_extra_inputs](#fluentbit_extra_inputs)
-  * [fluentbit_extra_outputs](#fluentbit_extra_outputs)
-  * [fluentbit_extra_parsers](#fluentbit_extra_parsers)
-  * [fluentbit_group_configs](#fluentbit_group_configs)
-  * [fluentbit_group_filters](#fluentbit_group_filters)
-  * [fluentbit_group_inputs](#fluentbit_group_inputs)
-  * [fluentbit_group_outputs](#fluentbit_group_outputs)
-  * [fluentbit_group_parsers](#fluentbit_group_parsers)
-  * [fluentbit_host_configs](#fluentbit_host_configs)
-  * [fluentbit_host_filters](#fluentbit_host_filters)
-  * [fluentbit_host_inputs](#fluentbit_host_inputs)
-  * [fluentbit_host_outputs](#fluentbit_host_outputs)
-  * [fluentbit_host_parsers](#fluentbit_host_parsers)
-  * [fluentbit_repo_distribution](#fluentbit_repo_distribution)
-  * [fluentbit_repo_release](#fluentbit_repo_release)
-  * [fluentbit_service_coro_stack_size](#fluentbit_service_coro_stack_size)
-  * [fluentbit_service_flush](#fluentbit_service_flush)
-  * [fluentbit_service_http_listen](#fluentbit_service_http_listen)
-  * [fluentbit_service_http_port](#fluentbit_service_http_port)
-  * [fluentbit_service_http_server](#fluentbit_service_http_server)
-  * [fluentbit_service_log_level](#fluentbit_service_log_level)
-* [Dependencies](#dependencies)
-* [License](#license)
-* [Author](#author)
+- [Default Variables](#default-variables)
+  - [fluentbit_default_configs](#fluentbit_default_configs)
+  - [fluentbit_default_filters](#fluentbit_default_filters)
+  - [fluentbit_default_inputs](#fluentbit_default_inputs)
+  - [fluentbit_default_outputs](#fluentbit_default_outputs)
+  - [fluentbit_default_parsers](#fluentbit_default_parsers)
+  - [fluentbit_extra_configs](#fluentbit_extra_configs)
+  - [fluentbit_extra_filters](#fluentbit_extra_filters)
+  - [fluentbit_extra_inputs](#fluentbit_extra_inputs)
+  - [fluentbit_extra_outputs](#fluentbit_extra_outputs)
+  - [fluentbit_extra_parsers](#fluentbit_extra_parsers)
+  - [fluentbit_group_configs](#fluentbit_group_configs)
+  - [fluentbit_group_filters](#fluentbit_group_filters)
+  - [fluentbit_group_inputs](#fluentbit_group_inputs)
+  - [fluentbit_group_outputs](#fluentbit_group_outputs)
+  - [fluentbit_group_parsers](#fluentbit_group_parsers)
+  - [fluentbit_host_configs](#fluentbit_host_configs)
+  - [fluentbit_host_filters](#fluentbit_host_filters)
+  - [fluentbit_host_inputs](#fluentbit_host_inputs)
+  - [fluentbit_host_outputs](#fluentbit_host_outputs)
+  - [fluentbit_host_parsers](#fluentbit_host_parsers)
+  - [fluentbit_repo_distribution](#fluentbit_repo_distribution)
+  - [fluentbit_repo_release](#fluentbit_repo_release)
+  - [fluentbit_service_coro_stack_size](#fluentbit_service_coro_stack_size)
+  - [fluentbit_service_flush](#fluentbit_service_flush)
+  - [fluentbit_service_http_listen](#fluentbit_service_http_listen)
+  - [fluentbit_service_http_port](#fluentbit_service_http_port)
+  - [fluentbit_service_http_server](#fluentbit_service_http_server)
+  - [fluentbit_service_log_level](#fluentbit_service_log_level)
+- [Discovered Tags](#discovered-tags)
+- [Dependencies](#dependencies)
+- [License](#license)
+- [Author](#author)
 
 ---
 
@@ -80,7 +81,10 @@ List of default filters
 ```YAML
 fluentbit_default_filters:
   - name: host
-    content: "Name modify\nMatch *\nAdd host {{ ansible_fqdn }}\n"
+    content: |
+      Name modify
+      Match *
+      Add host {{ ansible_fqdn }}
 ```
 
 #### Example usage
@@ -106,14 +110,26 @@ List of default inputs
 ```YAML
 fluentbit_default_inputs:
   - name: kern
-    content: "Name Tail\nPath /var/log/kern.log\nPath_Key file\nDB /var/lib/td-agent-bit/kern.db\n\
-      Parser syslog\n"
+    content: |
+      Name Tail
+      Path /var/log/kern.log
+      Path_Key file
+      DB /var/lib/td-agent-bit/kern.db
+      Parser syslog
   - name: auth
-    content: "Name Tail\nPath /var/log/auth.log\nPath_Key file\nDB /var/lib/td-agent-bit/auth.db\n\
-      Parser syslog\n"
+    content: |
+      Name Tail
+      Path /var/log/auth.log
+      Path_Key file
+      DB /var/lib/td-agent-bit/auth.db
+      Parser syslog
   - name: dpkg
-    content: "Name tail\nPath /var/log/dpkg.log\nPath_Key file\nDB /var/lib/td-agent-bit/dpkg.db\n\
-      Parser dpkg\n"
+    content: |
+      Name tail
+      Path /var/log/dpkg.log
+      Path_Key file
+      DB /var/lib/td-agent-bit/dpkg.db
+      Parser dpkg
 ```
 
 #### Example usage
@@ -138,7 +154,9 @@ List of default outputs
 ```YAML
 fluentbit_default_outputs:
   - name: stdout
-    content: "Name stdout\nMatch *\n"
+    content: |
+      Name stdout
+      Match *
 ```
 
 #### Example usage
@@ -163,15 +181,14 @@ List of extra parsers, similar to fluentbit_default_parsers
 fluentbit_default_parsers:
   - name: apache2_access
     format: regex
-    regex: "^(?<host>[^ ]*) [^ ]* (?<user>[^ ]*) \\[(?<time>[^\\]]*)\\] \"(?<method>\\\
-      S+)(?: +(?<path>[^ ]*) +\\S*)?\" (?<code>[^ ]*) (?<size>[^ ]*)(?: \"(?<referer>[^\\\
-      \"]*)\" \"(?<agent>.*)\")?$\n"
+    regex: |
+      ^(?<host>[^ ]*) [^ ]* (?<user>[^ ]*) \[(?<time>[^\]]*)\] "(?<method>\S+)(?: +(?<path>[^ ]*) +\S*)?" (?<code>[^ ]*) (?<size>[^ ]*)(?: "(?<referer>[^\"]*)" "(?<agent>.*)")?$
     time_key: time
     time_format: '%d/%b/%Y:%H:%M:%S %z'
   - name: apache2_error
     format: regex
-    regex: "^\\[[^ ]* (?<time>[^\\]]*)\\] \\[(?<level>[^\\]]*)\\](?: \\[pid (?<pid>[^\\\
-      ]]*)\\])?( \\[client (?<client>[^\\]]*)\\])? (?<message>.*)$\n"
+    regex: |
+      ^\[[^ ]* (?<time>[^\]]*)\] \[(?<level>[^\]]*)\](?: \[pid (?<pid>[^\]]*)\])?( \[client (?<client>[^\]]*)\])? (?<message>.*)$
     time_key: time
     time_format: '%b %d %H:%M:%S.%L %Y'
   - name: json
@@ -184,30 +201,32 @@ fluentbit_default_parsers:
     time_format: '%Y-%m-%dT%H:%M:%S.%L'
   - name: dockerd
     format: regex
-    regex: "time=\"(?<time>[^ ]*)\" level=(?<level>[^ ]*) msg=\"(?<msg>[^ ].*)\"\n"
+    regex: |
+      time="(?<time>[^ ]*)" level=(?<level>[^ ]*) msg="(?<msg>[^ ].*)"
     time_key: time
     time_format: '%Y-%m-%dT%H:%M:%S.%L'
   - name: syslog
     format: regex
-    regex: "^(?<time>[^ ]* {1,2}[^ ]* [^ ]*) (?<ident>[a-zA-Z0-9_\\/\\.\\-]*)(?:\\\
-      [(?<pid>[0-9]+)\\])?(?:[^\\:]*\\:)? *(?<message>.*)$\n"
+    regex: |
+      ^(?<time>[^ ]* {1,2}[^ ]* [^ ]*) (?<ident>[a-zA-Z0-9_\/\.\-]*)(?:\[(?<pid>[0-9]+)\])?(?:[^\:]*\:)? *(?<message>.*)$
     time_key: time
     time_format: '%b %d %H:%M:%S'
   - name: mongodb
     format: regex
-    regex: "^(?<time>[^ ]*)\\s+(?<severity>\\w)\\s+(?<component>[^ ]+)\\s+\\[(?<context>[^\\\
-      ]]+)]\\s+(?<message>.*?)$\n"
+    regex: |
+      ^(?<time>[^ ]*)\s+(?<severity>\w)\s+(?<component>[^ ]+)\s+\[(?<context>[^\]]+)]\s+(?<message>.*?)$
     time_key: time
     time_format: '%Y-%m-%dT%H:%M:%S.%L'
   - name: mysql
     format: regex
-    regex: "^(?<time>\\d{4}-\\d{1,2}-\\d{1,2}[ ]+\\d{1,2}:\\d{1,2}:\\d{1,2}) (?<thread>[^\
-      \ ]*) \\[(?<level>[^ ]*)\\] *(?<message>.*)$\n"
+    regex: |
+      ^(?<time>\d{4}-\d{1,2}-\d{1,2}[ ]+\d{1,2}:\d{1,2}:\d{1,2}) (?<thread>[^ ]*) \[(?<level>[^ ]*)\] *(?<message>.*)$
     time_key: time
     time_format: '%Y-%m-%dT %H:%M:%S'
   - name: dpkg
     format: regex
-    regex: "^(?<time>[^ ]+ [^ ]+) (?<message>.+)$\n"
+    regex: |
+      ^(?<time>[^ ]+ [^ ]+) (?<message>.+)$
     time_key: time
     time_format: '%Y-%m-%d %H:%M:%S'
 ```
@@ -436,9 +455,14 @@ Set the verbosity level of the service
 fluentbit_service_log_level: info
 ```
 
+## Discovered Tags
+
+**_fluentbit_**
+
+
 ## Dependencies
 
-* None
+- None
 
 ## License
 
