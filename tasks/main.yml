@@ -36,6 +36,9 @@
   file:
     path: "{{ item }}"
     state: directory
+    owner: root
+    group: root
+    mode: u=rwx,g=rx,o=rx
   tags:
     - fluentbit
 
@@ -54,6 +57,9 @@
   template:
     src: config.j2
     dest: /etc/td-agent-bit/td-agent-bit.conf
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
   tags:
     - fluentbit
 
@@ -63,6 +69,9 @@
   template:
     src: parsers.j2
     dest: /etc/td-agent-bit/parsers.conf
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
   tags:
     - fluentbit
 
@@ -77,6 +86,9 @@
   copy:
     content: "# just created to keep imports working"
     dest: "/etc/td-agent-bit/{{ item }}.d/_dummy.conf"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
   tags:
     - fluentbit
 
@@ -90,6 +102,9 @@
   copy:
     content: "{{ item.content }}"
     dest: /etc/td-agent-bit/config.d/{{ item.name }}.conf
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
   tags:
     - fluentbit
 
@@ -116,6 +131,9 @@
   template:
     src: input.j2
     dest: /etc/td-agent-bit/input.d/{{ item.name }}.conf
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
   tags:
     - fluentbit
 
@@ -142,6 +160,9 @@
   template:
     src: filter.j2
     dest: /etc/td-agent-bit/filter.d/{{ item.name }}.conf
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
   tags:
     - fluentbit
 
@@ -168,6 +189,9 @@
   template:
     src: output.j2
     dest: /etc/td-agent-bit/output.d/{{ item.name }}.conf
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
   tags:
     - fluentbit
 
