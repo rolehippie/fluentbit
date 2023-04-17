@@ -37,6 +37,7 @@ Building and improving this Ansible role have been sponsored by my current and p
   - [fluentbit_host_inputs](#fluentbit_host_inputs)
   - [fluentbit_host_outputs](#fluentbit_host_outputs)
   - [fluentbit_host_parsers](#fluentbit_host_parsers)
+  - [fluentbit_keyring](#fluentbit_keyring)
   - [fluentbit_repo_distribution](#fluentbit_repo_distribution)
   - [fluentbit_repo_release](#fluentbit_repo_release)
   - [fluentbit_service_coro_stack_size](#fluentbit_service_coro_stack_size)
@@ -382,6 +383,16 @@ fluentbit_host_outputs: []
 
 ```YAML
 fluentbit_host_parsers: []
+```
+
+### fluentbit_keyring
+
+Path for the repository keyring
+
+#### Default value
+
+```YAML
+fluentbit_keyring: /usr/share/keyrings/fluentbit-archive-keyring.gpg
 ```
 
 ### fluentbit_repo_distribution
