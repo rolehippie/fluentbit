@@ -222,4 +222,7 @@ fluentbit_host_parsers: []
 # @var fluentbit_default_parsers:description: List of extra parsers, similar to fluentbit_default_parsers
 fluentbit_extra_parsers: []
 
+# @var fluentbit_keyring:description: Path for the repository keyring
+fluentbit_keyring: /usr/share/keyrings/fluentbit-archive-keyring.gpg
+
 ...
