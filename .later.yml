@@ -4,7 +4,4 @@ rules:
     - molecule/ubuntu/tests
     - README.md
 
-  warning_filter:
-    - ANSIBLE0008
-
 ...
