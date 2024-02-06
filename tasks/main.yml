@@ -1,14 +1,13 @@
-# Standards: 1.2
 ---
 - name: Remove legacy key
-  apt_key:
+  ansible.builtin.apt_key:
     id: F209D8762A60CD49E680633B4FF8368B6EA0722A
     state: absent
   tags:
     - fluentbit
 
 - name: Remove legacy repo
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb https://packages.fluentbit.io/{{ fluentbit_repo_distribution }}/{{ fluentbit_repo_release }} {{ fluentbit_repo_release }} main"
     filename: fluentbit
     update_cache: False
@@ -17,14 +16,14 @@
     - fluentbit
 
 - name: Download repo key
-  shell:
+  ansible.builtin.shell:
     cmd: "curl -sSL 'https://packages.fluentbit.io/fluentbit.key' | gpg --dearmor --output {{ fluentbit_keyring }}"
     creates: "{{ fluentbit_keyring }}"
   tags:
     - fluentbit
 
 - name: Add apt repository
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb [signed-by={{ fluentbit_keyring }}] https://packages.fluentbit.io/{{ fluentbit_repo_distribution }}/{{ fluentbit_repo_release }} {{ fluentbit_repo_release }} main"
     filename: fluentbit
     update_cache: True
@@ -35,7 +34,7 @@
 - name: Install required packages
   loop:
     - td-agent-bit
-  package:
+  ansible.builtin.package:
     name: "{{ item }}"
     state: present
   tags:
@@ -48,7 +47,7 @@
     - /etc/td-agent-bit/input.d
     - /etc/td-agent-bit/filter.d
     - /etc/td-agent-bit/output.d
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     owner: root
@@ -60,7 +59,7 @@
 - name: Drop plugins config
   notify:
     - Restart fluentbit
-  file:
+  ansible.builtin.file:
     path: /etc/td-agent-bit/plugins.conf
     state: absent
   tags:
@@ -69,7 +68,7 @@
 - name: Write service config
   notify:
     - Restart fluentbit
-  template:
+  ansible.builtin.template:
     src: config.j2
     dest: /etc/td-agent-bit/td-agent-bit.conf
     owner: root
@@ -81,7 +80,7 @@
 - name: Write parsers config
   notify:
     - Restart fluentbit
-  template:
+  ansible.builtin.template:
     src: parsers.j2
     dest: /etc/td-agent-bit/parsers.conf
     owner: root
@@ -98,7 +97,7 @@
     - input
     - filter
     - output
-  copy:
+  ansible.builtin.copy:
     content: "# just created to keep imports working"
     dest: "/etc/td-agent-bit/{{ item }}.d/_dummy.conf"
     owner: root
@@ -114,7 +113,7 @@
   loop_control:
     label: "{{ item.name }}"
   when: item.state | default('present') == 'present'
-  copy:
+  ansible.builtin.copy:
     content: "{{ item.content }}"
     dest: /etc/td-agent-bit/config.d/{{ item.name }}.conf
     owner: root
@@ -130,7 +129,7 @@
   loop_control:
     label: "{{ item.name }}"
   when: item.state | default('present') == 'absent'
-  file:
+  ansible.builtin.file:
     path: /etc/td-agent-bit/config.d/{{ item.name }}.conf
     state: absent
   tags:
@@ -143,7 +142,7 @@
   loop_control:
     label: "{{ item.name }}"
   when: item.state | default('present') == 'present'
-  template:
+  ansible.builtin.template:
     src: input.j2
     dest: /etc/td-agent-bit/input.d/{{ item.name }}.conf
     owner: root
@@ -159,7 +158,7 @@
   loop_control:
     label: "{{ item.name }}"
   when: item.state | default('present') == 'absent'
-  file:
+  ansible.builtin.file:
     path: /etc/td-agent-bit/input.d/{{ item.name }}.conf
     state: absent
   tags:
@@ -172,7 +171,7 @@
   loop_control:
     label: "{{ item.name }}"
   when: item.state | default('present') == 'present'
-  template:
+  ansible.builtin.template:
     src: filter.j2
     dest: /etc/td-agent-bit/filter.d/{{ item.name }}.conf
     owner: root
@@ -188,7 +187,7 @@
   loop_control:
     label: "{{ item.name }}"
   when: item.state | default('present') == 'absent'
-  file:
+  ansible.builtin.file:
     path: /etc/td-agent-bit/filter.d/{{ item.name }}.conf
     state: absent
   tags:
@@ -201,7 +200,7 @@
   loop_control:
     label: "{{ item.name }}"
   when: item.state | default('present') == 'present'
-  template:
+  ansible.builtin.template:
     src: output.j2
     dest: /etc/td-agent-bit/output.d/{{ item.name }}.conf
     owner: root
@@ -217,14 +216,14 @@
   loop_control:
     label: "{{ item.name }}"
   when: item.state | default('present') == 'absent'
-  file:
+  ansible.builtin.file:
     path: /etc/td-agent-bit/output.d/{{ item.name }}.conf
     state: absent
   tags:
     - fluentbit
 
 - name: Start fluentbit service
-  systemd:
+  ansible.builtin.systemd:
     name: td-agent-bit
     state: started
     daemon_reload: yes
