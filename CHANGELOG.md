@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.0](https://github.com/rolehippie/fluentbit/compare/v1.1.0...v2.0.0) (2024-02-12)
+
+
+### Features
+
+* drop support for ubuntu 18.04 ([f3433d8](https://github.com/rolehippie/fluentbit/commit/f3433d8a42eeb9c261aad61ada79e0b84f2cd19e))
+* used full qualified collection names ([8d67788](https://github.com/rolehippie/fluentbit/commit/8d67788286795d1044d857545c4f15eb45c81493))
+
 ## [1.1.0](https://github.com/rolehippie/fluentbit/compare/v1.0.0...v1.1.0) (2023-04-17)
 
 
