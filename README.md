@@ -1,4 +1,4 @@
-# fluentbit
+# workspace
 
 [![Source Code](https://img.shields.io/badge/github-source%20code-blue?logo=github&logoColor=white)](https://github.com/rolehippie/fluentbit)
 [![General Workflow](https://github.com/rolehippie/fluentbit/actions/workflows/general.yml/badge.svg)](https://github.com/rolehippie/fluentbit/actions/workflows/general.yml)
@@ -477,7 +477,6 @@ fluentbit_service_log_level: info
 ## Discovered Tags
 
 **_fluentbit_**
-
 
 ## Dependencies
 
