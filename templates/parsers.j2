@@ -5,16 +5,16 @@
 [PARSER]
     Name {{ item.name }}
     Format {{ item.format }}
-{% if item.regex | default(False) %}
+{% if item.regex | default(false) %}
     Regex {{ item.regex | trim }}
 {% endif %}
-{% if item.time_key | default(False) %}
+{% if item.time_key | default(false) %}
     Time_Key {{ item.time_key }}
 {% endif %}
-{% if item.time_format | default(False) %}
+{% if item.time_format | default(false) %}
     Time_Format {{ item.time_format }}
 {% endif %}
-{% if item.time_keep | default(False) %}
+{% if item.time_keep | default(false) %}
     Time_Keep {{ item.time_keep }}
 {% endif %}
 {% endfor %}

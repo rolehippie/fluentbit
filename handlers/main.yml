@@ -1,8 +1,8 @@
 ---
 - name: Restart fluentbit
   ansible.builtin.systemd:
-    name: td-agent-bit
+    name: fluent-bit
     state: restarted
-    daemon_reload: yes
+    daemon_reload: true
 
 ...

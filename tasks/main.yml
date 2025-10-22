@@ -10,15 +10,54 @@
   ansible.builtin.apt_repository:
     repo: "deb https://packages.fluentbit.io/{{ fluentbit_repo_distribution }}/{{ fluentbit_repo_release }} {{ fluentbit_repo_release }} main"
     filename: fluentbit
-    update_cache: False
+    update_cache: false
+    state: absent
+  tags:
+    - fluentbit
+
+- name: Remove legacy packages
+  loop:
+    - td-agent-bit
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    purge: true
+    state: absent
+  tags:
+    - fluentbit
+
+- name: Remove legacy dirs
+  loop:
+    - /etc/td-agent-bit
+  ansible.builtin.file:
+    name: "{{ item }}"
     state: absent
   tags:
     - fluentbit
 
 - name: Download repo key
-  ansible.builtin.shell:
-    cmd: "curl -sSL 'https://packages.fluentbit.io/fluentbit.key' | gpg --dearmor --output {{ fluentbit_keyring }}"
-    creates: "{{ fluentbit_keyring }}"
+  register: fluentbit_key_download
+  ansible.builtin.get_url:
+    url: https://packages.fluentbit.io/fluentbit.key
+    dest: "{{ fluentbit_keyring }}.asc"
+    mode: u=rw,g=r,o=r
+    force: true
+  tags:
+    - fluentbit
+
+- name: Check repo key
+  register: fluentbit_key_status
+  ansible.builtin.stat:
+    path: "{{ fluentbit_keyring }}"
+  tags:
+    - fluentbit
+
+- name: Dearmor repo key
+  when:
+    - fluentbit_key_download.changed or not fluentbit_key_status.stat.exists
+  register: fluentbit_key_convert
+  changed_when: fluentbit_key_convert.rc == 0
+  ansible.builtin.command:
+    cmd: "gpg --dearmor -o {{ fluentbit_keyring }} {{ fluentbit_keyring }}.asc"
   tags:
     - fluentbit
 
@@ -26,14 +65,14 @@
   ansible.builtin.apt_repository:
     repo: "deb [signed-by={{ fluentbit_keyring }}] https://packages.fluentbit.io/{{ fluentbit_repo_distribution }}/{{ fluentbit_repo_release }} {{ fluentbit_repo_release }} main"
     filename: fluentbit
-    update_cache: True
+    update_cache: true
     state: present
   tags:
     - fluentbit
 
 - name: Install required packages
   loop:
-    - td-agent-bit
+    - fluent-bit
   ansible.builtin.package:
     name: "{{ item }}"
     state: present
@@ -42,11 +81,11 @@
 
 - name: Create required directories
   loop:
-    - /var/lib/td-agent-bit
-    - /etc/td-agent-bit/config.d
-    - /etc/td-agent-bit/input.d
-    - /etc/td-agent-bit/filter.d
-    - /etc/td-agent-bit/output.d
+    - /var/lib/fluent-bit
+    - /etc/fluent-bit/config.d
+    - /etc/fluent-bit/input.d
+    - /etc/fluent-bit/filter.d
+    - /etc/fluent-bit/output.d
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
@@ -60,7 +99,7 @@
   notify:
     - Restart fluentbit
   ansible.builtin.file:
-    path: /etc/td-agent-bit/plugins.conf
+    path: /etc/fluent-bit/plugins.conf
     state: absent
   tags:
     - fluentbit
@@ -70,7 +109,7 @@
     - Restart fluentbit
   ansible.builtin.template:
     src: config.j2
-    dest: /etc/td-agent-bit/td-agent-bit.conf
+    dest: /etc/fluent-bit/fluent-bit.conf
     owner: root
     group: root
     mode: u=rw,g=r,o=r
@@ -82,7 +121,7 @@
     - Restart fluentbit
   ansible.builtin.template:
     src: parsers.j2
-    dest: /etc/td-agent-bit/parsers.conf
+    dest: /etc/fluent-bit/parsers.conf
     owner: root
     group: root
     mode: u=rw,g=r,o=r
@@ -99,7 +138,7 @@
     - output
   ansible.builtin.copy:
     content: "# just created to keep imports working"
-    dest: "/etc/td-agent-bit/{{ item }}.d/_dummy.conf"
+    dest: "/etc/fluent-bit/{{ item }}.d/_dummy.conf"
     owner: root
     group: root
     mode: u=rw,g=r,o=r
@@ -112,10 +151,11 @@
   loop: "{{ fluentbit_default_configs + fluentbit_group_configs + fluentbit_host_configs + fluentbit_extra_configs }}"
   loop_control:
     label: "{{ item.name }}"
-  when: item.state | default('present') == 'present'
+  when:
+    - true if item.state is not defined else item.state == 'present'
   ansible.builtin.copy:
     content: "{{ item.content }}"
-    dest: /etc/td-agent-bit/config.d/{{ item.name }}.conf
+    dest: /etc/fluent-bit/config.d/{{ item.name }}.conf
     owner: root
     group: root
     mode: u=rw,g=r,o=r
@@ -128,9 +168,10 @@
   loop: "{{ fluentbit_default_configs + fluentbit_group_configs + fluentbit_host_configs + fluentbit_extra_configs }}"
   loop_control:
     label: "{{ item.name }}"
-  when: item.state | default('present') == 'absent'
+  when:
+    - false if item.state is not defined else item.state == 'absent'
   ansible.builtin.file:
-    path: /etc/td-agent-bit/config.d/{{ item.name }}.conf
+    path: /etc/fluent-bit/config.d/{{ item.name }}.conf
     state: absent
   tags:
     - fluentbit
@@ -141,10 +182,11 @@
   loop: "{{ fluentbit_default_inputs + fluentbit_group_inputs + fluentbit_host_inputs + fluentbit_extra_inputs }}"
   loop_control:
     label: "{{ item.name }}"
-  when: item.state | default('present') == 'present'
+  when:
+    - true if item.state is not defined else item.state == 'present'
   ansible.builtin.template:
     src: input.j2
-    dest: /etc/td-agent-bit/input.d/{{ item.name }}.conf
+    dest: /etc/fluent-bit/input.d/{{ item.name }}.conf
     owner: root
     group: root
     mode: u=rw,g=r,o=r
@@ -157,9 +199,10 @@
   loop: "{{ fluentbit_default_inputs + fluentbit_group_inputs + fluentbit_host_inputs + fluentbit_extra_inputs }}"
   loop_control:
     label: "{{ item.name }}"
-  when: item.state | default('present') == 'absent'
+  when:
+    - false if item.state is not defined else item.state == 'absent'
   ansible.builtin.file:
-    path: /etc/td-agent-bit/input.d/{{ item.name }}.conf
+    path: /etc/fluent-bit/input.d/{{ item.name }}.conf
     state: absent
   tags:
     - fluentbit
@@ -170,10 +213,11 @@
   loop: "{{ fluentbit_default_filters + fluentbit_group_filters + fluentbit_host_filters + fluentbit_extra_filters }}"
   loop_control:
     label: "{{ item.name }}"
-  when: item.state | default('present') == 'present'
+  when:
+    - true if item.state is not defined else item.state == 'present'
   ansible.builtin.template:
     src: filter.j2
-    dest: /etc/td-agent-bit/filter.d/{{ item.name }}.conf
+    dest: /etc/fluent-bit/filter.d/{{ item.name }}.conf
     owner: root
     group: root
     mode: u=rw,g=r,o=r
@@ -186,9 +230,10 @@
   loop: "{{ fluentbit_default_filters + fluentbit_group_filters + fluentbit_host_filters + fluentbit_extra_filters }}"
   loop_control:
     label: "{{ item.name }}"
-  when: item.state | default('present') == 'absent'
+  when:
+    - false if item.state is not defined else item.state == 'absent'
   ansible.builtin.file:
-    path: /etc/td-agent-bit/filter.d/{{ item.name }}.conf
+    path: /etc/fluent-bit/filter.d/{{ item.name }}.conf
     state: absent
   tags:
     - fluentbit
@@ -199,10 +244,11 @@
   loop: "{{ fluentbit_default_outputs + fluentbit_group_outputs + fluentbit_host_outputs + fluentbit_extra_outputs }}"
   loop_control:
     label: "{{ item.name }}"
-  when: item.state | default('present') == 'present'
+  when:
+    - true if item.state is not defined else item.state == 'present'
   ansible.builtin.template:
     src: output.j2
-    dest: /etc/td-agent-bit/output.d/{{ item.name }}.conf
+    dest: /etc/fluent-bit/output.d/{{ item.name }}.conf
     owner: root
     group: root
     mode: u=rw,g=r,o=r
@@ -215,20 +261,21 @@
   loop: "{{ fluentbit_default_outputs + fluentbit_group_outputs + fluentbit_host_outputs + fluentbit_extra_outputs }}"
   loop_control:
     label: "{{ item.name }}"
-  when: item.state | default('present') == 'absent'
+  when:
+    - false if item.state is not defined else item.state == 'absent'
   ansible.builtin.file:
-    path: /etc/td-agent-bit/output.d/{{ item.name }}.conf
+    path: /etc/fluent-bit/output.d/{{ item.name }}.conf
     state: absent
   tags:
     - fluentbit
 
 - name: Start fluentbit service
   ansible.builtin.systemd:
-    name: td-agent-bit
+    name: fluent-bit
     state: started
-    daemon_reload: yes
-    masked: no
-    enabled: yes
+    daemon_reload: true
+    masked: false
+    enabled: true
   tags:
     - fluentbit
 

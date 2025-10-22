@@ -15,7 +15,7 @@ fluentbit_service_flush: 5
 fluentbit_service_log_level: info
 
 # @var fluentbit_service_http_server:description: Enable the built-in HTTP server
-fluentbit_service_http_server: False
+fluentbit_service_http_server: false
 
 # @var fluentbit_service_http_listen:description: Listening address for the HTTP server
 fluentbit_service_http_listen: 0.0.0.0
@@ -62,31 +62,26 @@ fluentbit_extra_configs: []
 #     state: absent
 # @end
 fluentbit_default_inputs:
-  # - name: systemd
-  #   content: |
-  #     Name systemd
-  #     Tag systemd.*
-  #     DB /var/lib/td-agent-bit/systemd.db
   - name: kern
     content: |
       Name Tail
       Path /var/log/kern.log
       Path_Key file
-      DB /var/lib/td-agent-bit/kern.db
+      DB /var/lib/fluent-bit/kern.db
       Parser syslog
   - name: auth
     content: |
       Name Tail
       Path /var/log/auth.log
       Path_Key file
-      DB /var/lib/td-agent-bit/auth.db
+      DB /var/lib/fluent-bit/auth.db
       Parser syslog
   - name: dpkg
     content: |
       Name tail
       Path /var/log/dpkg.log
       Path_Key file
-      DB /var/lib/td-agent-bit/dpkg.db
+      DB /var/lib/fluent-bit/dpkg.db
       Parser dpkg
 
 # @var fluentbit_group_inputs:description: List of group inputs, similar to fluentbit_default_inputs
