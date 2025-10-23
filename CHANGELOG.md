@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/rolehippie/fluentbit/compare/v2.0.0...v2.1.0) (2025-10-23)
+
+
+### Features
+
+* apply new repo structure and update linting ([79e64d5](https://github.com/rolehippie/fluentbit/commit/79e64d556a60a8f9d39cfac2fdb590e70b311491))
+
 ## [2.0.0](https://github.com/rolehippie/fluentbit/compare/v1.1.0...v2.0.0) (2024-02-12)
 
 
