@@ -123,21 +123,21 @@ fluentbit_default_inputs:
       Name Tail
       Path /var/log/kern.log
       Path_Key file
-      DB /var/lib/td-agent-bit/kern.db
+      DB /var/lib/fluent-bit/kern.db
       Parser syslog
   - name: auth
     content: |
       Name Tail
       Path /var/log/auth.log
       Path_Key file
-      DB /var/lib/td-agent-bit/auth.db
+      DB /var/lib/fluent-bit/auth.db
       Parser syslog
   - name: dpkg
     content: |
       Name tail
       Path /var/log/dpkg.log
       Path_Key file
-      DB /var/lib/td-agent-bit/dpkg.db
+      DB /var/lib/fluent-bit/dpkg.db
       Parser dpkg
 ```
 
