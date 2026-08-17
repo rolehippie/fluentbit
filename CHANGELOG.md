@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.4.0](https://github.com/rolehippie/fluentbit/compare/v2.3.0...v2.4.0) (2026-08-17)
+
+### Dependencies
+
+* **minor:** update dependency pipx:ansible-lint to v26.8.0 ([#54](https://github.com/rolehippie/fluentbit/issues/54)) ([0734151](https://github.com/rolehippie/fluentbit/commit/07341513e8e875a33aa6a7df7de4eac9fe11de0d))
+* **minor:** update dependency pipx:molecule to v26.8.0 ([#55](https://github.com/rolehippie/fluentbit/issues/55)) ([a437449](https://github.com/rolehippie/fluentbit/commit/a43744979dae556b2ba6240eaab93b2d5bf39768))
+* **patch:** update dependency pipx:ansible-core to v2.21.3 ([#52](https://github.com/rolehippie/fluentbit/issues/52)) ([e227994](https://github.com/rolehippie/fluentbit/commit/e22799477993c6975600cf162d8f8049d7c3cb17))
+* **patch:** update dependency pre-commit to v4.6.2 ([#53](https://github.com/rolehippie/fluentbit/issues/53)) ([ec943aa](https://github.com/rolehippie/fluentbit/commit/ec943aacd144875c7d568f751c2d325f866a5d92))
+
 ## [2.3.0](https://github.com/rolehippie/fluentbit/compare/v2.2.0...v2.3.0) (2026-08-10)
 
 ### Dependencies
