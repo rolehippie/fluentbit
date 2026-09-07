@@ -401,7 +401,7 @@ Enforce another distribution for the repo
 #### Default value
 
 ```YAML
-fluentbit_repo_distribution: '{{ ansible_facts['distribution'] | lower }}'
+fluentbit_repo_distribution: "{{ ansible_facts['distribution'] | lower }}"
 ```
 
 ### fluentbit_repo_release
@@ -411,7 +411,7 @@ Enforce another release for the repo
 #### Default value
 
 ```YAML
-fluentbit_repo_release: '{{ ansible_facts['distribution_release'] }}'
+fluentbit_repo_release: "{{ ansible_facts['distribution_release'] }}"
 ```
 
 ### fluentbit_service_coro_stack_size
