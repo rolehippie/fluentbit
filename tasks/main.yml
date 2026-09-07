@@ -57,7 +57,7 @@
   register: fluentbit_key_convert
   changed_when: fluentbit_key_convert.rc == 0
   ansible.builtin.command:
-    cmd: "gpg --dearmor -o {{ fluentbit_keyring }} {{ fluentbit_keyring }}.asc"
+    cmd: "gpg --batch --yes --dearmor -o {{ fluentbit_keyring }} {{ fluentbit_keyring }}.asc"
   tags:
     - fluentbit
 

@@ -1,9 +1,9 @@
 ---
 # @var fluentbit_repo_distribution:description: Enforce another distribution for the repo
-fluentbit_repo_distribution: "{{ ansible_distribution | lower }}"
+fluentbit_repo_distribution: "{{ ansible_facts['distribution'] | lower }}"
 
 # @var fluentbit_repo_release:description: Enforce another release for the repo
-fluentbit_repo_release: "{{ ansible_distribution_release }}"
+fluentbit_repo_release: "{{ ansible_facts['distribution_release'] }}"
 
 # @var fluentbit_service_coro_stack_size:description: Coroutines stack size in bytes
 fluentbit_service_coro_stack_size: 24576
@@ -110,7 +110,7 @@ fluentbit_default_filters:
     content: |
       Name modify
       Match *
-      Add host {{ ansible_fqdn }}
+      Add host {{ ansible_facts['fqdn'] }}
 
 # @var fluentbit_group_filters:description: List of group filters, similar to fluentbit_default_filters
 fluentbit_group_filters: []
